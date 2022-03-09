@@ -34,9 +34,9 @@ namespace Homemade.Script
 
         // Threshold for the finger to be considered as pressing a key
         [SerializeField]
-        private float thresholdIn = 0.5f;
+        private float thresholdIn = 0.4f;
         [SerializeField]
-        private float thresholdOut = 0.6f;
+        private float thresholdOut = 0.38f;
 
         private void Awake()
         {
@@ -78,11 +78,13 @@ namespace Homemade.Script
             {
                 fingerCurled[which] = true;
                 //Debug.Log($"a finger is pressed: {which}");
-                StartCoroutine(fingerPressEvent(which));
+                StartCoroutine(piano.playSound(fingers[which].transform.position));
+                fingers[which].GetComponent<Renderer>().material.color = Color.red;
             }
             else if (_finger < thresholdOut && fingerCurled[which])
             {
                 fingerCurled[which] = false;
+                fingers[which].GetComponent<Renderer>().material.color = Color.white;
                 //Debug.Log($"a finger is raised: {which}");
             }
         }
@@ -97,38 +99,6 @@ namespace Homemade.Script
             whichFinger(skeleton.middleCurl, 1, right);
             whichFinger(skeleton.ringCurl, 2, right);
             whichFinger(skeleton.pinkyCurl, 3, right);
-        }
-        
-        /*
-        private void fingerPressLeft(SteamVR_Action_Skeleton skeleton)
-        {
-            // No solution more generic were found ..
-            whichFinger(skeleton.indexCurl, 0, false);
-            whichFinger(skeleton.middleCurl, 1, false);
-            whichFinger(skeleton.ringCurl, 2, false);
-            whichFinger(skeleton.pinkyCurl, 3, false);
-        }
-        private void fingerPressRight(SteamVR_Action_Skeleton skeleton)
-        {
-            whichFinger(skeleton.indexCurl, 0, true);
-            whichFinger(skeleton.middleCurl, 1, true);
-            whichFinger(skeleton.ringCurl, 2, true);
-            whichFinger(skeleton.pinkyCurl, 3, true);
-        }
-        */
-        private IEnumerator fingerPressEvent(int finger)
-        {
-            
-            /*
-             * var hand = right ? "Right" : "Left";
-             * Debug.Log($"a finger is pressed: {_finger} {hand}");
-             */
-
-            StartCoroutine(piano.playSound(fingers[finger].transform.position));
-            
-            fingers[finger].GetComponent<Renderer>().material.color = Color.red;
-            yield return new WaitForSeconds(0.5f);
-            fingers[finger].GetComponent<Renderer>().material.color = Color.white;
         }
     }
 }
